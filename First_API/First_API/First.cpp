@@ -17,6 +17,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	/*
 	* 윈도우 설정
 	*/
+	
 	WndClass.cbClsExtra = 0;
 	WndClass.cbWndExtra = 0;
 	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
@@ -28,7 +29,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	WndClass.lpszMenuName = NULL;
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
 	RegisterClass(&WndClass);
-
+	
 	/*
 	* 윈도우 생성
 	*/
@@ -39,19 +40,35 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	hWndMain = hWnd; // hWnd 정보도 전역변수에 저장!	
 
 	while (GetMessage(&Message, NULL, 0, 0)) {
-		TranslateMessage(&Message);
-		DispatchMessage(&Message);
+		TranslateMessage(&Message); //메세지 변경
+		DispatchMessage(&Message); //메세지 윈도우 프로시져 전달
 	}
 	return (int)Message.wParam;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage,
-	WPARAM wParam, LPARAM lParam)
-{
+LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
+	HDC hdc;
+	PAINTSTRUCT ps;
+	static TCHAR str[256];
+	int len;
+	RECT rt = { 100,100,400,300 };
+
 	switch (iMessage) {
+	case WM_CHAR:
+		len = _tcslen(str);
+		str[len] = wParam;
+		str[len + 1] = 0;
+		InvalidateRect(hWnd, NULL, FALSE);
+		return 0;
+	case WM_PAINT:
+		hdc = BeginPaint(hWnd, &ps);
+		//TextOut(hdc, 50, 50, str, _tcslen(str));
+		DrawText(hdc, str, _tcslen(str), &rt, DT_LEFT | DT_WORDBREAK);
+		EndPaint(hWnd, &ps);
+		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 	}
-	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
+	return (DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
