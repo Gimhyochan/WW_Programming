@@ -1,4 +1,4 @@
-﻿#include <windows.h>
+#include <windows.h>
 #include <TCHAR.H>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -44,26 +44,30 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage,
 {
 	HDC hdc;
 	PAINTSTRUCT ps;
-	static TCHAR str[10];
-	int len;
+	static int x = 100;
+	static int y = 100;
 
 	switch (iMessage) {
 	case WM_KEYDOWN:
 		switch (wParam) {
-			case //backspace and etc
+		case VK_LEFT:
+			x -= 8;
+			break;
+		case VK_RIGHT:
+			x += 8;
+			break;
+		case VK_UP:
+			y -= 8;
+			break;
+		case VK_DOWN:
+			y += 8;
+			break;
 		}
-	case WM_CHAR:
-		len = _tcslen(str);
-		str[len] = wParam; //(TCHAR)wParam;
-		str[len + 1] = 0; //NULL;
 		InvalidateRect(hWnd, NULL, FALSE);
-		return 0;
-	case WM_CREATE:
-		hWndMain = hWnd;
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		TextOut(hdc, 50, 50, str, _tcslen(str));
+		TextOut(hdc, x, y, _T("A"), 1);
 		EndPaint(hWnd, &ps);
 		return 0;
 	case WM_DESTROY:
