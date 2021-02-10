@@ -1,10 +1,10 @@
-#include <windows.h>
+ï»¿#include <windows.h>
 #include <TCHAR.H>
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 HINSTANCE g_hInst;
 HWND hWndMain;
-LPCTSTR lpszClass = _T("First");
+LPCTSTR lpszClass = _T("API Start");
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	, LPSTR lpszCmdParam, int nCmdShow)
@@ -14,13 +14,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	WNDCLASS WndClass;
 	g_hInst = hInstance;
 
-	/*
-	* À©µµ¿ì ¼³Á¤
-	*/
-	
 	WndClass.cbClsExtra = 0;
 	WndClass.cbWndExtra = 0;
-	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	WndClass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
 	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
 	WndClass.hInstance = hInstance;
@@ -29,56 +25,49 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	WndClass.lpszMenuName = NULL;
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
 	RegisterClass(&WndClass);
-	
-	/*
-	* À©µµ¿ì »ı¼º
-	*/
+
 	hWnd = CreateWindow(lpszClass, lpszClass, WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 		NULL, (HMENU)NULL, hInstance, NULL);
-	ShowWindow(hWnd, nCmdShow); //À©µµ¿ì Ãâ·Â
-	hWndMain = hWnd; // hWnd Á¤º¸µµ Àü¿ªº¯¼ö¿¡ ÀúÀå!	
+	ShowWindow(hWnd, nCmdShow);
+	hWndMain = hWnd; // hWnd Â¡Â§âˆ«âˆÂµÂµ Â¿Â¸Ã¸â„¢âˆ«Ã˜ÂºË†Ã¸Â° Â¿Ë™Â¿Ã‚!
 
 	while (GetMessage(&Message, NULL, 0, 0)) {
-		TranslateMessage(&Message); //¸Ş¼¼Áö º¯°æ
-		DispatchMessage(&Message); //¸Ş¼¼Áö À©µµ¿ì ÇÁ·Î½ÃÁ® Àü´Ş
+		TranslateMessage(&Message);
+		DispatchMessage(&Message);
 	}
 	return (int)Message.wParam;
 }
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK WndProc(HWND hWnd, UINT iMessage,
+	WPARAM wParam, LPARAM lParam)
+{
 	HDC hdc;
 	PAINTSTRUCT ps;
-	static TCHAR str[256];
-	int len;
-	RECT rt = { 100,100,400,300 };
 
 	switch (iMessage) {
-	case WM_LBUTTONDOWN:
-		MessageBox(hWnd, _T("Test"), _T("Test"), MB_OK);
-		return 0;
-	case WM_CHAR:
-		len = _tcslen(str);
-		str[len] = wParam;
-		str[len + 1] = 0;
-		InvalidateRect(hWnd, NULL, FALSE);
+	case WM_CREATE:
+		hWndMain = hWnd;
 		return 0;
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
-		//TextOut(hdc, 50, 50, str, _tcslen(str));
-		//DrawText(hdc, str, _tcslen(str), &rt, DT_LEFT | DT_WORDBREAK);
-
-		SetPixel(hdc, 10, 10, RGB(255, 0, 0));
-		MoveToEx(hdc, 50, 50, NULL);
-		LineTo(hdc, 300, 90);
-		Rectangle(hdc, 50, 100, 200, 180);
-		Ellipse(hdc, 220, 100, 400, 200);
-
 		EndPaint(hWnd, &ps);
 		return 0;
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		return 0;
 	}
-	return (DefWindowProc(hWnd, iMessage, wParam, lParam));
+	return(DefWindowProc(hWnd, iMessage, wParam, lParam));
 }
+
+//temp Ï€Ã†Â¿â„Ã¸â‰  Â±ÃŠÂ¿Ãƒ Â±âˆÂ«Å“Â±â€š
+// num = _tcslen(temp);
+
+
+// Ï€Ã†Â¿â„Ã¸â‰ Ã¸Â° Ã¦â‰¤Â±â€š 1
+// #include <stdio.h> âˆ†Æ’Â¿Å“Â¿Ãƒ Â«Â Ã¸â€°Â«â€˜
+// _stprintf_s(temp, _T("Cown Down: %2d"), Count);
+
+
+// Ï€Ã†Â¿â„Ã¸â‰ Ã¸Â° Ã¦â‰¤Â±â€š 2
+// _tcscpy_s(temp, _T("Â»Â£Â»Ã˜Âºâˆ« Â¡Ë†Ã¸Â¯"));
